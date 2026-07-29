@@ -1,0 +1,30 @@
+# .github/workflows/deploy.yaml
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch: # 允许手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        name: Install pnpm
+        with:
+          version: 11
+          cache: true
+      - name: Install and Build
+        run: pnpm install && pnpm docs:build
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .vitepress/dist
